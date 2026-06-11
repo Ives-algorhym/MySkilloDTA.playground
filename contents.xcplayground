@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<playground version='7.0' target-platform='ios' swift-version='6' buildActiveScheme='true' executeOnSourceChanges='true' importAppTypes='true'>
+  <pages>
+    <page name='01_ArrayBasics'/>
+    <page name='02_StringProblems'/>
+    <page name='03_PairAndWindow'/>
+    <page name='04_KProblems'/>
+    <page name='05_TwoScanProblems'/>
+    <page name='06_Sorting'/>
+    <page name='07_DataStructures'/>
+    <page name='08_Trees'/>
+    <page name='09_Graphs'/>
+    <page name='10_DynamicProgramming'/>
+    <page name='11_Templates'/>
+  </pages>
+</playground>
