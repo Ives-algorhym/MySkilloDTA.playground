@@ -175,3 +175,76 @@ func rotLeft(_ a: [Int], _ d: Int) -> [Int] {
 // rotLeft([1, 2, 3, 4, 5], 2)  → [3, 4, 5, 1, 2]
 // rotLeft([1, 2, 3, 4, 5], 0)  → [1, 2, 3, 4, 5]
 // rotLeftBrute([1, 2, 3, 4, 5], 2) → [3, 4, 5, 1, 2]
+
+
+// ============================================================
+// PROBLEM 5: Longest Substring Without Repeating Characters
+// LEVEL: Hard
+// TIME: O(n³) brute force → O(n) optimal (sliding window)
+// ============================================================
+
+// DESCRIPTION:
+// Given a string, find the length of the longest contiguous substring
+// where no character appears more than once.
+
+// Input:  "abcabcbb" → 3   ("abc")
+// Input:  "bbbbb"    → 1   ("b" — all repeats, best is single char)
+// Input:  "pwwkew"   → 3   ("wke")
+// Input:  "a"        → 1   (single character)
+
+// MENTAL MODEL (brute force):
+// Try every possible substring using two pointers i and j.
+// For each substring, check if it contains any duplicate characters.
+// Track the length of the longest valid substring found.
+
+// CONSTRAINTS: string has at least 1 character
+// EDGE CASES: all same characters (answer is 1), all unique (answer is n)
+
+func lengthOfLongestSubstringBrute(_ s: String) -> Int {
+    // time: O(n) — converts string to character array
+    // space: O(n) — array of n characters
+    let chars = Array(s)
+
+    // time: O(1) | space: O(1)
+    var best = 0
+
+    // outer loop: try every starting index i
+    // time: O(n) outer iterations
+    // INVARIANT: best holds the longest valid substring starting before i
+    for i in 0..<chars.count {
+
+        // inner loop: expand window rightward from i to j
+        // time: O(n) per outer iteration → O(n²) pairs
+        // INVARIANT: window = chars[i...j]
+        for j in i..<chars.count {
+
+            // check current window chars[i...j] for duplicates
+            // time: O(n) — scan window for each pair → O(n³) total
+            // space: O(n) — seen array grows with window size
+            var seen: [Character] = []
+            var hasDuplicate = false
+
+            for k in i...j {
+                if seen.contains(chars[k]) {
+                    hasDuplicate = true
+                    break
+                }
+                seen.append(chars[k])
+            }
+
+            // update best if window is valid and longer than current best
+            if !hasDuplicate {
+                let length = j - i + 1
+                best = max(best, length)
+            }
+        }
+    }
+    return best
+}
+
+// TEST CASES:
+// lengthOfLongestSubstringBrute("abcabcbb") → 3
+// lengthOfLongestSubstring("abcabcbb")      → 3
+// lengthOfLongestSubstring("bbbbb")         → 1
+// lengthOfLongestSubstring("pwwkew")        → 3
+// lengthOfLongestSubstring("a")             → 1

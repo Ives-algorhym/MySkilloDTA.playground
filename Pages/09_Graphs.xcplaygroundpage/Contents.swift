@@ -150,3 +150,69 @@ func hasCycle(_ graph: [[Int]]) -> Bool {
 // TEST CASES:
 // hasCycle([[1,3],[0,2],[1,3],[0,2]])  → true  (0-1-2-3-0 is a cycle)
 // hasCycle([[1],[0,2],[1]])            → false (0-1-2 is a path, no cycle)
+
+
+// Build A graph with adjacent list
+
+var adjacentList: [[Int]] = [[], [], [], []]
+
+
+@MainActor func addEdge(edge: Int, to vertix: Int, indirect: Bool = false) {
+    guard edge >= 0, edge < adjacentList.count, vertix >= 0, vertix < adjacentList.count else {
+        return
+    }
+
+    adjacentList[vertix].append(edge)
+
+    if indirect {
+        adjacentList[edge].append(vertix)
+    }
+}
+
+addEdge(edge: 0, to: 1)
+addEdge(edge: 0, to: 2)
+addEdge(edge: 1, to: 3)
+addEdge(edge: 2, to: 3)
+addEdge(edge: 3, to: 4)
+
+
+@MainActor func bfs(from start: Int) -> [Int] {
+    var visited: Set<Int> = [start]
+    var queue: [Int] = [start]
+    var order: [Int] = []
+
+    while !queue.isEmpty {
+        let current = queue.removeFirst()
+        order.append(current)
+
+        for neighbor in adjacentList[current] {
+            if !visited.contains(neighbor) {
+                visited.insert(neighbor)
+                queue.append(neighbor)
+            }
+        }
+
+    }
+    return order
+}
+
+@MainActor
+func dfs(from start: Int) ->  [Int] {
+    var  visited: Set<Int> = [start]
+    var stack: [Int] = [start]
+    var order: [Int] = []
+
+    while !stack.isEmpty {
+        let current = stack.removeLast()
+        order.append(current)
+
+        for neighbord in adjacentList[current]
+        {
+            if !visited.contains(neighbord) {
+                visited.insert(neighbord)
+                stack.append(neighbord)
+            }
+        }
+    }
+    return order
+}

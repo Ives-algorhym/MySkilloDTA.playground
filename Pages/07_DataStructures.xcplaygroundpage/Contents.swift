@@ -23,15 +23,15 @@
 
 var stack: [Int] = []
 
-func pushStack(_ value: Int) {
+@MainActor func pushStack(_ value: Int) {
     stack.append(value)         // add to top
 }
 
-func popStack() -> Int? {
+@MainActor func popStack() -> Int? {
     return stack.popLast()      // remove from top, nil if empty
 }
 
-func peekStack() -> Int? {
+@MainActor func peekStack() -> Int? {
     return stack.last           // look at top without removing
 }
 
@@ -64,16 +64,16 @@ func peekStack() -> Int? {
 
 var queue: [Int] = []
 
-func enqueue(_ value: Int) {
+@MainActor func enqueue(_ value: Int) {
     queue.append(value)             // add to back
 }
 
-func dequeue() -> Int? {
+@MainActor func dequeue() -> Int? {
     guard !queue.isEmpty else { return nil }
     return queue.removeFirst()      // take from front
 }
 
-func peekQueue() -> Int? {
+@MainActor func peekQueue() -> Int? {
     return queue.first              // look at front without removing
 }
 

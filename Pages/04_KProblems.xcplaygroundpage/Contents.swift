@@ -326,3 +326,63 @@ func closestKNumbers(_ nums: [Int], _ target: Int, _ k: Int) -> [Int] {
 // TEST CASES:
 // closestKNumbers([1, 3, 7, 9, 2], 5, 3) → [3, 7, 2]  (distances: 4,2,2,4,3)
 // closestKNumbers([1, 2, 3], 2, 2)        → [2, 1]
+
+
+// ============================================================
+// PROBLEM 5: K Closest Points to Origin
+// LEVEL: Medium
+// Return the k points closest to (0, 0).
+// TIME: O(n × k) | SPACE: O(n + k)
+// ============================================================
+
+// DESCRIPTION:
+// Given an array of 2D points, return the k points closest to the origin.
+// Order of result does not matter.
+
+// Input:  [(1,3), (-2,2), (5,8), (0,1)], k=2  → [(-2,2), (0,1)]
+// Input:  [(3,3), (5,-1), (-2,4)],        k=1  → [(3,3)]
+
+// MENTAL MODEL:
+// Repeat k times: find the point with the smallest squared distance to origin,
+// grab it, remove it from copy.
+// Use x² + y² instead of √(x² + y²) — square root is not needed for comparison.
+
+// CONSTRAINTS: k ≤ points.count
+// EDGE CASES: k = 1 (just the closest), multiple points at equal distance
+
+func kClosestsPoints(points: [(Int, Int)], k: Int) -> [(Int, Int)] {
+    var result: [(Int, Int)] = []
+    var copy = points
+
+    for _ in 0..<k {
+
+        var closestPointIndex = 0
+        var closestDistance = (copy[closestPointIndex].0 * copy[closestPointIndex].0) + (
+            copy[closestPointIndex].1 * copy[closestPointIndex].1
+        )
+
+        for i in 0..<copy.count {
+
+            let currentPDistance = (copy[i].0 * copy[i].0) + (
+                copy[i].1 * copy[i].1
+            )
+
+            if currentPDistance < closestDistance {
+                closestDistance = currentPDistance
+                closestPointIndex = i
+            }
+
+        }
+
+        result.append(copy[closestPointIndex])
+        copy.remove(at: closestPointIndex)
+
+    }
+
+
+    return result
+}
+
+// TEST CASES:
+// kClosestPoints([(1,3),(-2,2),(5,8),(0,1)], 2) → [(-2,2),(0,1)]
+// kClosestPoints([(3,3),(5,-1),(-2,4)], 1)       → [(3,3)]

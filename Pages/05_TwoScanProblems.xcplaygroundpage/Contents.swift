@@ -144,3 +144,119 @@ func largestRectangle(_ heights: [Int]) -> Int {
 // largestRectangle([2,1,5,6,2,3]) → 10  (bars 5,6 → height=5, width=2)
 // largestRectangle([2,4])          → 4   (single bar height=4, width=1)
 // largestRectangle([1,1,1,1])      → 4   (all bars → height=1, width=4)
+
+
+// ============================================================
+// PROBLEM 3: Product of Array Except Self
+// LEVEL: Hard
+// Given an array of integers, return a new array where each element at index i
+// is the product of all elements in the original array except nums[i]. You cannot use division.
+
+// TIME: O(n²) | SPACE: O(n)
+// ============================================================
+
+// MENTAL MODEL:
+// For each index i, scan left (0..<i) to multiply everything before it,
+// scan right (i+1..<n) to multiply everything after it.
+// Multiply both sides together — that is the answer for position i.
+
+// CONSTRAINTS: array has at least 2 elements
+// EDGE CASES: array contains zero (all other positions become 0),
+//             multiple zeros (entire result is zeros)
+
+// Input:  [1, 2, 3, 4]     → [24, 12, 8, 6]
+// Input:  [2, 3, 4]         → [12, 8, 6]
+// Input:  [-1, 1, 0, -3, 3] → [0, 0, 9, 0, 0]
+
+func productArrayExceptSelf(_ nums: [Int]) -> [Int] {
+
+    // time: O(1) — empty array creation
+    // space: O(n) — grows to hold one product per element
+    var result: [Int] = []
+
+    // outer loop: for each position i, compute its answer independently
+    // time: O(n) outer iterations
+    // INVARIANT: result contains the correct product for all positions before i
+    for i in 0..<nums.count {
+
+        // scan left — multiply all elements to the left of i
+        // time: O(n) | space: O(1) — single integer
+        // INVARIANT: productLeft = nums[0] * nums[1] * ... * nums[l-1]
+        var productLeft = 1
+        for l in 0..<i {
+            productLeft *= nums[l]
+        }
+        // INVARIANT: productLeft = product of all elements to the left of i
+
+        // scan right — multiply all elements to the right of i
+        // time: O(n) | space: O(1) — single integer
+        // INVARIANT: productRight = nums[r] * nums[r+1] * ... * nums[n-1]
+        var productRight = 1
+        for r in (i + 1)..<nums.count {
+            productRight *= nums[r]
+        }
+        // INVARIANT: productRight = product of all elements to the right of i
+
+        // answer for position i = left product × right product
+        // time: O(1)
+        result.append(productLeft * productRight)
+    }
+    // INVARIANT: result[i] = product of all elements except nums[i]
+
+    return result
+}
+
+
+// ─────────────────────────────────────────
+// SOLUTION 2 — Prefix & Suffix Arrays O(n)
+// ─────────────────────────────────────────
+
+// MENTAL MODEL:
+// Instead of recomputing left and right products from scratch for each i,
+// precompute them once and store in two arrays.
+// prefix[i] = product of everything to the LEFT of i.
+// suffix[i] = product of everything to the RIGHT of i.
+// result[i] = prefix[i] * suffix[i] — one multiplication per position.
+
+func productArrayExceptSelfOptimal(_ nums: [Int]) -> [Int] {
+
+    // time: O(1) | space: O(1)
+    let n = nums.count
+
+    // build prefix array — left to right pass
+    // prefix[0] = 1 (nothing to the left of index 0)
+    // time: O(n) | space: O(n)
+    var prefix = Array(repeating: 1, count: n)
+    // INVARIANT: prefix[i] = product of nums[0..<i] (everything left of i)
+    for i in 1..<n {
+        prefix[i] = prefix[i - 1] * nums[i - 1]
+    }
+    // INVARIANT: prefix[i] holds the product of all elements to the left of i
+
+    // build suffix array — right to left pass
+    // suffix[n-1] = 1 (nothing to the right of last index)
+    // time: O(n) | space: O(n)
+    var suffix = Array(repeating: 1, count: n)
+    // INVARIANT: suffix[i] = product of nums[i+1..<n] (everything right of i)
+    for i in stride(from: n - 2, through: 0, by: -1) {
+        suffix[i] = suffix[i + 1] * nums[i + 1]
+    }
+    // INVARIANT: suffix[i] holds the product of all elements to the right of i
+
+    // combine — result[i] = everything left × everything right
+    // time: O(n) | space: O(n)
+    var result = Array(repeating: 1, count: n)
+    // INVARIANT: result[i] = product of all elements in nums except nums[i]
+    for i in 0..<n {
+        result[i] = prefix[i] * suffix[i]
+    }
+
+    return result
+}
+
+// TEST CASES:
+// productArrayExceptSelf([1, 2, 3, 4])          → [24, 12, 8, 6]
+// productArrayExceptSelf([2, 3, 4])              → [12, 8, 6]
+// productArrayExceptSelf([-1, 1, 0, -3, 3])     → [0, 0, 9, 0, 0]
+// productArrayExceptSelfOptimal([1, 2, 3, 4])    → [24, 12, 8, 6]
+// productArrayExceptSelfOptimal([-1, 1, 0, -3, 3]) → [0, 0, 9, 0, 0]
